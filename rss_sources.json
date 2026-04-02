@@ -1,6 +1,19 @@
 [
   {
     "id": "toyota_shokki",
+    "type": "rss",
     "url": "https://www.toyota-shokki.co.jp/news/rss_news.xml"
+  },
+  {
+    "id": "kion_press_releases",
+    "type": "scrape_kion",
+    "url": "https://www.kiongroup.com/en/News-Stories/Press-Releases/",
+    "max_items": 80
+  },
+  {
+    "id": "kion_financial_news",
+    "type": "scrape_kion",
+    "url": "https://www.kiongroup.com/en/Investor-Relations/Financial-News/Press-Releases-Detail.html",
+    "max_items": 80
   }
 ]

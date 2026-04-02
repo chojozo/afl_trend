@@ -1,6 +1,6 @@
 # Multi RSS -> Supabase
 
-This project fetches multiple RSS feeds and stores `title / content / link` into Supabase.
+This project fetches multiple sources (`rss` + `scrape_kion`) and stores `title / content / link` into Supabase.
 
 ## 1) Create Supabase table
 
@@ -8,16 +8,20 @@ Run [supabase_setup.sql](c:\Users\jo.hyeon.woo\Documents\AI_Code\afl_trend\supab
 
 The table is `public.rss_items` and deduplication uses `(source_id, link)`.
 
-## 2) Configure RSS sources
+## 2) Configure sources
 
 Edit [rss_sources.json](c:\Users\jo.hyeon.woo\Documents\AI_Code\afl_trend\rss_sources.json):
 
 ```json
 [
-  { "id": "toyota_shokki", "url": "https://www.toyota-shokki.co.jp/news/rss_news.xml" },
-  { "id": "another_feed", "url": "https://example.com/rss.xml" }
+  { "id": "toyota_shokki", "type": "rss", "url": "https://www.toyota-shokki.co.jp/news/rss_news.xml" },
+  { "id": "kion_press_releases", "type": "scrape_kion", "url": "https://www.kiongroup.com/en/News-Stories/Press-Releases/", "max_items": 80 },
+  { "id": "kion_financial_news", "type": "scrape_kion", "url": "https://www.kiongroup.com/en/Investor-Relations/Financial-News/Press-Releases-Detail.html", "max_items": 80 }
 ]
 ```
+
+- `type=rss`: reads normal RSS feed.
+- `type=scrape_kion`: scrapes KION listing page, follows detail links, then stores title/content/link.
 
 ## 3) Local run (venv)
 
