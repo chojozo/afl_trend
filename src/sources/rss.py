@@ -3,7 +3,7 @@ from typing import Any
 
 import feedparser
 
-from src.utils import parse_datetime, valid_row
+from src.utils import calc_quality_score, clean_text, parse_datetime, valid_row
 
 
 def _pick_content(entry: Any) -> str:
@@ -19,18 +19,25 @@ def _to_row(entry: Any, source_id: str, source_url: str) -> dict[str, Any]:
     title = (getattr(entry, "title", "") or "").strip()
     link = (getattr(entry, "link", "") or "").strip()
     content = _pick_content(entry)
+    content_clean = clean_text(content)
     published_at = parse_datetime(
         getattr(entry, "published", None)
         or getattr(entry, "updated", None)
         or getattr(entry, "pubDate", None)
     )
+    quality = calc_quality_score(title, content_clean, published_at)
     return {
         "title": title,
         "content": content,
+        "content_clean": content_clean,
+        "content_raw": content,
+        "raw_html": None,
         "link": link,
         "published_at": published_at,
         "source_id": source_id,
         "source_url": source_url,
+        "parse_method": "rss_feedparser",
+        "parse_quality_score": quality,
         "fetched_at": datetime.now(timezone.utc).isoformat(),
     }
 

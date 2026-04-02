@@ -18,6 +18,16 @@ Run [supabase_setup.sql](c:\Users\jo.hyeon.woo\Documents\AI_Code\afl_trend\supab
 
 The table is `public.rss_items` and deduplication uses `(source_id, link)`.
 
+If the table already exists, run [supabase_migration_add_content_quality.sql](c:\Users\jo.hyeon.woo\Documents\AI_Code\afl_trend\supabase_migration_add_content_quality.sql).
+
+New quality fields stored per row:
+
+- `content_raw`: raw extracted content
+- `content_clean`: cleaned plain-text content
+- `raw_html`: page HTML snapshot (mainly for scrape sources)
+- `parse_method`: parser id (example: `rss_feedparser`, `scrape_kion_v1`)
+- `parse_quality_score`: 0.00 - 1.00 quality score for downstream filtering
+
 ## 2) Configure sources
 
 Edit [rss_sources.json](c:\Users\jo.hyeon.woo\Documents\AI_Code\afl_trend\rss_sources.json):

@@ -25,6 +25,10 @@ def run() -> int:
     if removed > 0:
         print(f"[INFO] Deduped in-batch duplicates: {removed}")
 
+    low_quality = [r for r in rows if float(r.get("parse_quality_score", 0.0)) < 0.6]
+    if low_quality:
+        print(f"[WARN] Low quality rows detected (<0.6): {len(low_quality)}")
+
     written = upsert_rows(client, table_name, rows)
     print(f"[INFO] Upsert completed. Rows returned: {written}, rows sent: {len(rows)}")
     return 0

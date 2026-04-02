@@ -2,10 +2,15 @@ create table if not exists public.rss_items (
   id bigint generated always as identity primary key,
   title text not null,
   content text,
+  content_clean text,
+  content_raw text,
+  raw_html text,
   link text not null,
   source_id text not null,
   source_url text not null,
   published_at timestamptz,
+  parse_method text,
+  parse_quality_score numeric(4,2),
   fetched_at timestamptz not null default now(),
   created_at timestamptz not null default now()
 );

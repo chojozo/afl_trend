@@ -5,7 +5,7 @@ from urllib.parse import parse_qs, urljoin, urlparse
 import requests
 from bs4 import BeautifulSoup
 
-from src.utils import parse_datetime, valid_row
+from src.utils import calc_quality_score, clean_text, parse_datetime, valid_row
 
 DATE_RE = re.compile(r"\b\d{4}-\d{2}-\d{2}(?:\s*/\s*\d{2}:\d{2}:\d{2})?\b")
 
@@ -44,7 +44,8 @@ def _extract_meta(soup: BeautifulSoup, key: str, attr: str = "name") -> str:
 def _parse_detail(detail_url: str, source_id: str, source_url: str) -> dict:
     response = requests.get(detail_url, timeout=20)
     response.raise_for_status()
-    soup = BeautifulSoup(response.text, "html.parser")
+    raw_html = response.text
+    soup = BeautifulSoup(raw_html, "html.parser")
 
     title = _extract_meta(soup, "og:title", attr="property")
     if not title:
@@ -59,18 +60,25 @@ def _parse_detail(detail_url: str, source_id: str, source_url: str) -> dict:
         paragraphs = [p.get_text(" ", strip=True) for p in soup.select("main p")]
         paragraphs = [p for p in paragraphs if p]
         desc = "\n".join(paragraphs[:3]).strip()
+    content_clean = clean_text(desc)
 
     text_blob = soup.get_text(" ", strip=True)
     date_match = DATE_RE.search(text_blob)
     published_at = parse_datetime(date_match.group(0)) if date_match else None
+    quality = calc_quality_score(title, content_clean, published_at)
 
     return {
         "title": title,
         "content": desc,
+        "content_clean": content_clean,
+        "content_raw": desc,
+        "raw_html": raw_html,
         "link": detail_url,
         "published_at": published_at,
         "source_id": source_id,
         "source_url": source_url,
+        "parse_method": "scrape_kion_v1",
+        "parse_quality_score": quality,
         "fetched_at": datetime.now(timezone.utc).isoformat(),
     }
 
