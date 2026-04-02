@@ -2,6 +2,16 @@
 
 This project fetches multiple sources (`rss` + `scrape_kion`) and stores `title / content / link` into Supabase.
 
+Project structure:
+
+- `src/main.py`: entrypoint
+- `src/collector.py`: orchestration
+- `src/config.py`: env/source config loader
+- `src/sources/rss.py`: RSS collector
+- `src/sources/kion.py`: KION scraper
+- `src/storage/supabase.py`: Supabase upsert adapter
+- `rss_to_supabase.py`: backward-compatible wrapper used by GitHub Actions
+
 ## 1) Create Supabase table
 
 Run [supabase_setup.sql](c:\Users\jo.hyeon.woo\Documents\AI_Code\afl_trend\supabase_setup.sql) in Supabase SQL Editor.
